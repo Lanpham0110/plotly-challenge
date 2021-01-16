@@ -1,18 +1,28 @@
 // Use the D3 library to read in `samples.json`. 
-// create 4 functions- dropDownID, megaData, plots, optionChanged
+// create 4 functions- megaData, plots, dropDownID, optionChanged
 
 
 function megaData(sampleID){
     d3.json("samples.json").then((data) => {
-        var samplesKey = data.samples;
+        var samplesKey = data.metadata;
         var filteredData = samplesKey.filter(d =>d.id == sampleID)[0];
+        console.log(filteredData);
         var demoInfo = d3.select("#sample-metadata");
+        // clearing previous data
         demoInfo.html("");
-        Object.entries(filteredData).forEach((key) => {demoInfo.append("h5").text});
+        demoInfo.append("h5").text(`id: ${filteredData.id}`);
+        demoInfo.append("h5").text(`ethnicity: ${filteredData.ethnicity}`);
+        demoInfo.append("h5").text(`gender: ${filteredData.gender}`);
+        demoInfo.append("h5").text(`age: ${filteredData.age}`);
+        demoInfo.append("h5").text(`location: ${filteredData.location}`);
+        demoInfo.append("h5").text(`bbtype: ${filteredData.bbtype}`);
+        demoInfo.append("h5").text(`wfreq: ${filteredData.wfreq}`);
+        // Object.entries(filteredData).forEach((key) => {demoInfo.append("h5").text});
     });
 
 };
-
+// {"id": 940, "ethnicity": "Caucasian", "gender": "F", "age": 24.0,
+//  "location": "Beaufort/NC", "bbtype": "I", "wfreq": 2.0}
 function plots(sampleID){
     d3.json("samples.json").then((data) => {
         console.log(data)
@@ -20,14 +30,17 @@ function plots(sampleID){
         var samplesKey = data.samples;
         var filteredData = samplesKey.filter(d =>d.id == sampleID)[0];
         var otuID = filteredData.otu_ids.slice(0, 10).reverse() ;
+        console.log(otuID)
+        var otuIDString= otuID.map(d => `otu ${d}`)
+        console.log(otuIDString)
         var otuLabel= filteredData.otu_labels.slice(0, 10);
         var sampleValues = filteredData.sample_values.slice(0, 10).reverse();
 
         // Create bar chart
         var trace1 = {
             x: sampleValues,
-            y: otuID,
-            text: labels,
+            y: otuIDString,
+            text: otuLabel,
             type:"bar",
             orientation: "h",
             };
@@ -77,19 +90,19 @@ function plots(sampleID){
         // create the bubble plot
         Plotly.newPlot("bubble", data2, layout); 
     }
-    )};
+)};
 
 function dropDownID(){
     var dropdown = d3.select("#selDataset");
     d3.json("samples.json").then((data)=> {
         console.log(data)
     
-            // get the id data to the dropdown menu
+        // get the id data to the dropdown menu
         data.names.forEach(function(name) {
             dropdown.append("option").text(name).property("value");
         });
     
-            // call the functions to display the data and the plots to the page
+        // call the functions to display the data and the plots to the page
         plots(data.names[0]);
         megaData(data.names[0]);
     });
