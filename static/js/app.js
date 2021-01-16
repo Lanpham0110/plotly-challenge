@@ -1,21 +1,6 @@
 // Use the D3 library to read in `samples.json`. 
 // create 4 functions- dropDownID, megaData, plots, optionChanged
 
-function dropDownID(){
-    var dropdown = d3.select("#selDataset");
-    d3.json("samples.json").then((data)=> {
-        console.log(data)
-
-        // get the id data to the dropdown menu
-        data.names.forEach(function(name) {
-            dropdown.append("option").text(name).property("value");
-        });
-
-        // call the functions to display the data and the plots to the page
-        getPlot(data.names[0]);
-        getInfo(data.names[0]);
-    });
-};
 
 function megaData(sampleID){
     d3.json("samples.json").then((data) => {
@@ -94,7 +79,27 @@ function plots(sampleID){
     }
     )};
 
-function optionChanged(sampleID){
-    getPlot(sampleID);
-    getInfo(sampleID);
+function dropDownID(){
+    var dropdown = d3.select("#selDataset");
+    d3.json("samples.json").then((data)=> {
+        console.log(data)
+    
+            // get the id data to the dropdown menu
+        data.names.forEach(function(name) {
+            dropdown.append("option").text(name).property("value");
+        });
+    
+            // call the functions to display the data and the plots to the page
+        plots(data.names[0]);
+        megaData(data.names[0]);
+    });
 };
+
+function optionChanged(sampleID){
+    plots(sampleID);
+    megaData(sampleID);
+};
+
+
+dropDownID();
+
